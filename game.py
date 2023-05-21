@@ -49,15 +49,8 @@ class Game:
     def move_in_tableau(self, source_pile, target_pile, num_cards):
         if isinstance(source_pile, TableauPile) and source_pile is not target_pile:
             if target_pile.is_valid(source_pile.cards[-num_cards]):
-                # check if there are face-down cards below the cards to be moved
-                if source_pile.face_down_cards and source_pile.face_down_cards[-1] == source_pile.cards[-num_cards]:
-                    return False
                 target_pile.cards.extend(source_pile.cards[-num_cards:])
                 source_pile.cards = source_pile.cards[:-num_cards]
-                # flip the new top card if exists
-                if source_pile.cards:
-                    source_pile.cards[-1].flip()
-                return True
         return False
 
     #move the cards from waste pile to tableau
