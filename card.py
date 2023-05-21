@@ -1,17 +1,27 @@
 class Card:
-    SUITS = ('Hearts', 'Diamonds', 'Clubs', 'Spades')
-    RANKS = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace')
-
-    def __init__(self, suit, rank, face_up=False):
+    def __init__(self, rank, suit, face_up=True):
+        self.rank = str(rank)
         self.suit = suit
-        self.rank = rank
         self.face_up = face_up
 
-    def __repr__(self):
-        return f"{self.rank} of {self.suit}"
+    def get_image_filename(self):
+        return f'{self.rank}{self.suit}.png'
 
     def flip(self):
         self.face_up = not self.face_up
 
     def is_face_up(self):
         return self.face_up
+
+    def is_same_color(self, other_card):
+        if other_card:
+            red_suits = ['Hearts', 'Diamonds']
+            black_suits = ['Spades', 'Clubs']
+            return (self.suit in red_suits and other_card.suit in red_suits) or \
+                   (self.suit in black_suits and other_card.suit in black_suits)
+        return False
+
+    def __str__(self):
+        return f'{self.rank} of {self.suit}' if self.face_up else 'Unknown card'
+
+
