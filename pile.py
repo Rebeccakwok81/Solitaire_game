@@ -1,3 +1,7 @@
+import random
+from card import Card
+
+
 class Pile:
     def __init__(self):
         self.cards = []
@@ -20,7 +24,9 @@ class StockPile(Pile):
 
 
 class WastePile(Pile):
-    pass  # nothing yet, to be implemented
+    def __init__(self):
+        super().__init__()
+        self.face_up_cards = []
 
 
 class FoundationPile(Pile):

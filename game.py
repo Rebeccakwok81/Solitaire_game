@@ -3,6 +3,10 @@
 # does not provide ability o f flipping over face-down cards in the tableau
 # does not provide error checking, in terms of invalid moves
 
+from deck import Deck
+from pile import StockPile, WastePile, FoundationPile, TableauPile
+from card import Card
+
 class Game:
     def __init__(self):
         self.deck = Deck()
@@ -47,6 +51,15 @@ class Game:
             if target_pile.is_valid(source_pile.cards[-num_cards]):
                 target_pile.cards.extend(source_pile.cards[-num_cards:])
                 source_pile.cards = source_pile.cards[:-num_cards]
+                return True
+        return False
+
+    #move the cards from waste pile to tableau
+    def move_from_waste(self, target_pile):
+        if isinstance(target_pile, TableauPile):
+            if target_pile.is_valid(self.waste_pile.top_card()):
+                card = self.waste_pile.remove_card()
+                target_pile.add_card(card)
                 return True
         return False
 
