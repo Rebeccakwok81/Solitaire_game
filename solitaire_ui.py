@@ -45,7 +45,7 @@ class SolitaireUI:
                     print(f"Error loading image: {filepath}")
 
         # load the back image, going with 03
-        back_image_path = os.path.join('Playing Cards Asset', 'Backs', 'Card-Back-03.png')
+        back_image_path = f"Playing Cards Asset\Backs\Card-Back-03.png"
         try:
             back_image = pygame.image.load(back_image_path)
             card_images['back.png'] = back_image
