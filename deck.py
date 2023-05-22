@@ -7,7 +7,7 @@ class Deck:
         self.create_deck()
 
     def create_deck(self):
-        for suit in ['hearts', 'diamonds', 'clubs', 'spades']:
+        for suit in ['h', 'd', 'c', 's']:
             for rank in ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']:
                 self.cards.append(Card(rank, suit))
 

@@ -15,8 +15,8 @@ class Card:
 
     def is_same_color(self, other_card):
         if other_card:
-            red_suits = ['Hearts', 'Diamonds']
-            black_suits = ['Spades', 'Clubs']
+            red_suits = ['h', 'd']
+            black_suits = ['s', 'c']
             return (self.suit in red_suits and other_card.suit in red_suits) or \
                    (self.suit in black_suits and other_card.suit in black_suits)
         return False

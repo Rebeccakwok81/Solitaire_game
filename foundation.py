@@ -1,6 +1,10 @@
 from pile import Pile
 
 class FoundationPile(Pile):
+    def __init__(self):
+        super().__init__()
+        self.max_cards = 13
+
     def add_card(self, card):
         if self.is_valid_move(card):
             super().add_card(card)
@@ -20,3 +24,6 @@ class FoundationPile(Pile):
     def is_next_rank(rank1, rank2):
         ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
         return ranks.index(rank1) == ranks.index(rank2) + 1
+
+    def is_full(self):
+        return len(self.cards) == self.max_cards

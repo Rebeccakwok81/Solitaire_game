@@ -1,4 +1,4 @@
-# need to move away from import os, playing cards asset folder in project itself. 
+# need to move away from import os, playing cards asset folder in project itself. -- changed to relative path
 # verify best way to load assets.
 # current issue with defining the card to match those in asset folder.
 # tried swapping so rank is before suit, for example Ad would be ace of diamonds.
@@ -9,17 +9,23 @@ import pygame
 import os
 from pygame.locals import *
 from game import Game
+from talonpile import TalonPile
+from pile import Pile
+from tableau import TableauPile
+import sys
 
 class SolitaireUI:
     def __init__(self):
         pygame.init()
         self.game = Game()
+        self.talonpile = TalonPile()
+        self.tableau_piles = TableauPile()
         self.window_surface = pygame.display.set_mode((800, 600))
         self.card_images = self.load_card_images()
         self.selected_pile = None
 
     def load_card_images(self):
-        CARDS_PATH = os.path.join('Playing Cards Asset', 'Cards', 'Modern')
+        CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
         card_images = {}
 
         for suit in ('c', 'd', 'h', 's'):
@@ -29,7 +35,8 @@ class SolitaireUI:
                     filename = f"{rank}{suit}.png"
                 else:
                     filename = f"{rank}{suit}.png"
-                filepath = os.path.join(CARDS_PATH, filename)
+                # filepath = os.path.join(CARDS_PATH, filename)
+                filepath = f"{CARDS_PATH}\{filename}"
             
                 try:
                     image = pygame.image.load(filepath)
@@ -52,26 +59,26 @@ class SolitaireUI:
 
         # need to draw tableau piles
         for i, pile in enumerate(self.game.tableau):
-            print("Card Rank:", card.rank, "Card Suit:", card.suit)
-            self.draw_pile(pile, (100 + 80*i, 300))
+            # print("Card Rank:", card.rank, "Card Suit:", card.suit)
+            self.draw_pile_cards(pile, (100 + 100*i, 400))
 
         # need to draw foundation piles
         for i, pile in enumerate(self.game.foundation):
-            self.draw_pile(pile, (500 + 80*i, 50))
+            self.draw_pile_cards(pile, (500 + 80*i, 50))
 
         # need to draw the talon pile
-        self.draw_pile(self.game.talon_pile, (150, 50))
+        self.draw_pile_cards(self.game.talonpile, (150, 50))
 
         # need to draw the stockpile
-        self.draw_pile(self.game.stockpile, (50, 50), face_up=False)
+        self.draw_pile_cards(self.game.stockpile, (50, 50), face_up=False)
 
         pygame.display.flip()
 
-    def draw_pile(self, pile, position, face_up=True):
+    def draw_pile_cards(self, pile, position, face_up=True):
         x, y = position
         for i, card in enumerate(pile.cards):
             if card.face_up == face_up:
-                print("Card Rank:", card.rank, "Card Suit:", card.suit)
+                # print("Card Rank:", card.rank, "Card Suit:", card.suit)
                 image = self.card_images[f'{card.rank}{card.suit}']
             else:
                 image = self.card_images['back.png']
@@ -119,15 +126,15 @@ class SolitaireUI:
         elif y <= 50 and x <= 50:
             if not self.game.stockpile.is_empty():
                 card = self.game.stockpile.remove_card()
-                self.game.talon_pile.add_card(card)
+                self.game.talonpile.add_card(card)
 
         # here we check if talon pile was clicked. 
         elif y <= 50 and x <= 150:
-            if not self.game.talon_pile.is_empty():
+            if not self.game.talonpile.is_empty():
                 # as per game rules, can't move a pile of cards from talon pile, only a card at a time.
                 if self.selected_pile is None:
                     self.selected_pile = Pile()
-                    self.selected_pile.add_card(self.game.talon_pile.remove_card())
+                    self.selected_pile.add_card(self.game.talonpile.remove_card())
                 else:
                     # can't move cards to talon, deselect the selected pile. 
                     self.selected_pile = None
