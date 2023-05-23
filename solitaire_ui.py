@@ -27,6 +27,7 @@ class SolitaireUI:
     def load_card_images(self):
         CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
         card_images = {}
+        card_width, card_height = 100, 200
 
         for suit in ('c', 'd', 'h', 's'):
             for rank in ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'):
@@ -40,6 +41,7 @@ class SolitaireUI:
             
                 try:
                     image = pygame.image.load(filepath)
+                    image = pygame.transform.scale(image, (card_width, card_height))
                     card_images[card_name] = image
                 except pygame.error:
                     print(f"Error loading image: {filepath}")
@@ -48,6 +50,7 @@ class SolitaireUI:
         back_image_path = f"Playing Cards Asset\Backs\Card-Back-03.png"
         try:
             back_image = pygame.image.load(back_image_path)
+            back_image = pygame.transform.scale(back_image, (card_width, card_height))
             card_images['back.png'] = back_image
         except pygame.error:
             print(f"Error loading back image: {back_image_path}")
@@ -166,8 +169,10 @@ class SolitaireUI:
             self.draw()
             pygame.display.flip()
 
-# better way to do this, but for now, create instance of the UI
-ui = SolitaireUI()
 
-# run the game. 
-ui.run()
+if __name__ == '__main__':
+    # better way to do this, but for now, create instance of the UI
+    ui = SolitaireUI()
+
+    # run the game. 
+    ui.run()

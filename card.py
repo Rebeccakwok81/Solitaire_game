@@ -1,5 +1,5 @@
 class Card:
-    def __init__(self, rank, suit, face_up=True):
+    def __init__(self, rank, suit, face_up=False):
         self.rank = str(rank)
         self.suit = suit
         self.face_up = face_up
