@@ -20,7 +20,7 @@ class SolitaireUI:
         self.game = Game()
         self.talonpile = TalonPile()
         self.tableau_piles = TableauPile()
-        self.window_surface = pygame.display.set_mode((800, 600))
+        self.window_surface = pygame.display.set_mode((900, 600))
         self.card_images = self.load_card_images()
         self.selected_pile = None
 
