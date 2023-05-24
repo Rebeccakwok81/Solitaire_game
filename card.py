@@ -1,5 +1,5 @@
 class Card:
-    def __init__(self, rank, suit, face_up=False):
+    def __init__(self, rank, suit, face_up=True):
         self.rank = str(rank)
         self.suit = suit
         self.face_up = face_up
@@ -20,8 +20,4 @@ class Card:
             return (self.suit in red_suits and other_card.suit in red_suits) or \
                    (self.suit in black_suits and other_card.suit in black_suits)
         return False
-
-    def __str__(self):
-        return f'{self.rank} of {self.suit}' if self.face_up else 'Unknown card'
-
 

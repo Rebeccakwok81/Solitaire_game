@@ -20,7 +20,7 @@ class SolitaireUI:
         self.game = Game()
         self.talonpile = TalonPile()
         self.tableau_piles = TableauPile()
-        self.window_surface = pygame.display.set_mode((900, 600))
+        self.window_surface = pygame.display.set_mode((1200, 750))
         self.card_images = self.load_card_images()
         self.selected_pile = None
 
@@ -63,29 +63,32 @@ class SolitaireUI:
         # need to draw tableau piles
         for i, pile in enumerate(self.game.tableau):
             # print("Card Rank:", card.rank, "Card Suit:", card.suit)
-            self.draw_pile_cards(pile, (100 + 100*i, 400))
+            self.draw_pile_cards(pile, (300 + 100*i, 280))
 
         # need to draw foundation piles
         for i, pile in enumerate(self.game.foundation):
             self.draw_pile_cards(pile, (500 + 80*i, 50))
 
         # need to draw the talon pile
-        self.draw_pile_cards(self.game.talonpile, (150, 50))
+        self.draw_pile_cards(self.game.talonpile, (250, -650))
 
         # need to draw the stockpile
-        self.draw_pile_cards(self.game.stockpile, (50, 50), face_up=False)
+        self.draw_pile_cards(self.game.stockpile, (150, -650), face_up=False)
 
         pygame.display.flip()
 
-    def draw_pile_cards(self, pile, position, face_up=True):
+    def draw_pile_cards(self, pile, position, face_up=False):
         x, y = position
         for i, card in enumerate(pile.cards):
+            if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
+                continue
+            
             if card.face_up == face_up:
                 # print("Card Rank:", card.rank, "Card Suit:", card.suit)
                 image = self.card_images[f'{card.rank}{card.suit}']
             else:
                 image = self.card_images['back.png']
-            self.window_surface.blit(image, (x, y + 20 * i))
+            self.window_surface.blit(image, (x, y + 30*i))
 
     def handle_click(self, position):
         x, y = position
