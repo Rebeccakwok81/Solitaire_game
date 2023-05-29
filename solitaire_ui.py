@@ -58,9 +58,9 @@ class SolitaireUI:
         # load empty image for foundation pile and talon pile
         empty_holder = f"Playing Cards Asset\empty_holder.png"
         try:
-            f_image = pygame.image.load(empty_holder)
-            f_image = pygame.transform.scale(f_image, (card_width, card_height))
-            card_images['empty_holder.png'] = f_image
+            e_image = pygame.image.load(empty_holder)
+            e_image = pygame.transform.scale(e_image, (card_width, card_height))
+            card_images['empty_holder.png'] = e_image
         except pygame.error:
             print(f"Error loading back image: {empty_holder}")
 
@@ -79,31 +79,39 @@ class SolitaireUI:
             self.draw_pile_cards(pile, (570 + 110*i, 50))
 
         # need to draw the talon pile
-        self.draw_pile_cards(self.game.talonpile, (250, -650))
+        self.draw_pile_cards(self.game.talonpile, (370, 50))
 
         # need to draw the stockpile
-        self.draw_pile_cards(self.game.stockpile, (150, -630), face_up=False)
+        self.draw_pile_cards(self.game.stockpile, (250 , -640), face_up=False)
 
         pygame.display.flip()
 
     def draw_pile_cards(self, pile, position, face_up=False):
         x, y = position
 
-        # create empty holder for foundation pile
-        image = self.card_images['empty_holder.png']
-        self.window_surface.blit(image, (x, y))
-
-        for i, card in enumerate(pile.cards):
-            if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
-                continue
-            
-            if card.face_up == face_up:
-                # print("Card Rank:", card.rank, "Card Suit:", card.suit)
-                image = self.card_images[f'{card.rank}{card.suit}']
-                
+        if pile.is_empty():
+            if pile == self.game.stockpile:
+                # Show the top three face-up cards from the talon pile
+                talon_cards = self.game.stockpile.talon_pile[-3:]
+                for i, card in enumerate(talon_cards):
+                    image = self.card_images[f'{card.rank}{card.suit}']
+                    self.window_surface.blit(image, (x, y + 30*i))
             else:
-                image = self.card_images['back.png']
-            self.window_surface.blit(image, (x, y + 30*i))
+                # Create empty holder for foundation pile
+                image = self.card_images['empty_holder.png']
+                self.window_surface.blit(image, (x, y))
+        else:
+            for i, card in enumerate(pile.cards):
+                if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
+                    continue
+                
+                elif card.face_up == face_up:
+                    # print("Card Rank:", card.rank, "Card Suit:", card.suit)
+                    image = self.card_images[f'{card.rank}{card.suit}']
+                    
+                else:
+                    image = self.card_images['back.png']
+                self.window_surface.blit(image, (x, y + 30*i))
 
     def handle_click(self, position):
         x, y = position
@@ -144,13 +152,13 @@ class SolitaireUI:
                     self.selected_pile = None
 
         # here we check if stockpile was clicked. 
-        elif y <= 50 and x <= 50:
+        elif y <= 50 and 250 <= x <= 350:
             if not self.game.stockpile.is_empty():
                 card = self.game.stockpile.remove_card()
                 self.game.talonpile.add_card(card)
 
         # here we check if talon pile was clicked. 
-        elif y <= 50 and x <= 150:
+        elif y <= 50 and 50 <= x <= 150:
             if not self.game.talonpile.is_empty():
                 # as per game rules, can't move a pile of cards from talon pile, only a card at a time.
                 if self.selected_pile is None:
