@@ -55,14 +55,14 @@ class SolitaireUI:
         except pygame.error:
             print(f"Error loading back image: {back_image_path}")
 
-        # load empty image for foundation slots
-        foundation_holder = f"Playing Cards Asset\empty_holder.png"
+        # load empty image for foundation pile and talon pile
+        empty_holder = f"Playing Cards Asset\empty_holder.png"
         try:
-            f_image = pygame.image.load(foundation_holder)
+            f_image = pygame.image.load(empty_holder)
             f_image = pygame.transform.scale(f_image, (card_width, card_height))
             card_images['empty_holder.png'] = f_image
         except pygame.error:
-            print(f"Error loading back image: {foundation_holder}")
+            print(f"Error loading back image: {empty_holder}")
 
         return card_images
 
