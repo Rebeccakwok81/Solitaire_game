@@ -55,6 +55,15 @@ class SolitaireUI:
         except pygame.error:
             print(f"Error loading back image: {back_image_path}")
 
+        # load empty image for foundation slots
+        foundation_holder = f"Playing Cards Asset\empty_holder.png"
+        try:
+            f_image = pygame.image.load(foundation_holder)
+            f_image = pygame.transform.scale(f_image, (card_width, card_height))
+            card_images['empty_holder.png'] = f_image
+        except pygame.error:
+            print(f"Error loading back image: {foundation_holder}")
+
         return card_images
 
     def draw(self):
@@ -67,18 +76,23 @@ class SolitaireUI:
 
         # need to draw foundation piles
         for i, pile in enumerate(self.game.foundation):
-            self.draw_pile_cards(pile, (500 + 80*i, 50))
+            self.draw_pile_cards(pile, (570 + 110*i, 50))
 
         # need to draw the talon pile
         self.draw_pile_cards(self.game.talonpile, (250, -650))
 
         # need to draw the stockpile
-        self.draw_pile_cards(self.game.stockpile, (150, -650), face_up=False)
+        self.draw_pile_cards(self.game.stockpile, (150, -630), face_up=False)
 
         pygame.display.flip()
 
     def draw_pile_cards(self, pile, position, face_up=False):
         x, y = position
+
+        # create empty holder for foundation pile
+        image = self.card_images['empty_holder.png']
+        self.window_surface.blit(image, (x, y))
+
         for i, card in enumerate(pile.cards):
             if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
                 continue
@@ -86,6 +100,7 @@ class SolitaireUI:
             if card.face_up == face_up:
                 # print("Card Rank:", card.rank, "Card Suit:", card.suit)
                 image = self.card_images[f'{card.rank}{card.suit}']
+                
             else:
                 image = self.card_images['back.png']
             self.window_surface.blit(image, (x, y + 30*i))
