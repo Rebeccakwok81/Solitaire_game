@@ -27,7 +27,7 @@ class SolitaireUI:
     def load_card_images(self):
         CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
         card_images = {}
-        card_width, card_height = 100, 200
+        card_width, card_height = 115, 175
 
         for suit in ('c', 'd', 'h', 's'):
             for rank in ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'):
@@ -58,37 +58,87 @@ class SolitaireUI:
         return card_images
 
     def draw(self):
-        self.window_surface.fill((0, 128, 0))  # green background
+        self.window_surface.fill((0, 100, 0))  # green background
 
-        # need to draw tableau piles
+    # margins from left and right window borders
+        left_right_margin = 100
+
+    # calculate new column width
+        column_width = (1200 - 2*left_right_margin) // 7
+
+    # calculate the card width and height
+        card_width = 115
+        card_height = 175
+
+    # Y-coordinates for the rows
+        top_row_y = 50  
+        bottom_row_y = 300  
+
+    # Draw rectangles for stockpile, talonpile, and foundation piles
+        for i in range(7):
+            x_coordinate = left_right_margin + i*column_width
+            if i == 0:
+                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Stockpile
+            elif i == 1:
+                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Talonpile
+            elif i >= 3:
+                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Foundation piles
+
+    # Calculate the position of the stockpile
+        stockpile_x = left_right_margin + column_width // 2 - card_width // 2
+        stockpile_y = top_row_y
+
+    # Draw tableau piles
         for i, pile in enumerate(self.game.tableau):
-            # print("Card Rank:", card.rank, "Card Suit:", card.suit)
-            self.draw_pile_cards(pile, (300 + 100*i, 280))
+            self.draw_pile_cards(pile, (left_right_margin + i*column_width, bottom_row_y))
 
-        # need to draw foundation piles
+    # Draw foundation, talon, and stockpile cards
         for i, pile in enumerate(self.game.foundation):
-            self.draw_pile_cards(pile, (500 + 80*i, 50))
+            self.draw_pile_cards(pile, (left_right_margin + (i+3)*column_width, top_row_y))
 
-        # need to draw the talon pile
-        self.draw_pile_cards(self.game.talonpile, (250, -650))
-
-        # need to draw the stockpile
-        self.draw_pile_cards(self.game.stockpile, (150, -650), face_up=False)
+            self.draw_pile_cards(self.game.talonpile, (left_right_margin + column_width, top_row_y))
+            self.draw_pile_cards(self.game.stockpile, (stockpile_x, stockpile_y), face_up=False)
 
         pygame.display.flip()
 
     def draw_pile_cards(self, pile, position, face_up=False):
         x, y = position
-        for i, card in enumerate(pile.cards):
-            if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
-                continue
-            
-            if card.face_up == face_up:
-                # print("Card Rank:", card.rank, "Card Suit:", card.suit)
-                image = self.card_images[f'{card.rank}{card.suit}']
+        column_width = 800 // 7  # Divide the window into seven columns
+        top_row_y = 50  # Y-coordinate for the top row
+        bottom_row_y = 300  # Y-coordinate for the bottom row (tableau piles)
+        card_width = 115
+        card_height = 175
+
+        # Calculate the position for the deck card to align with the rectangle
+        deck_x = x + card_width // 2
+        deck_y = top_row_y + card_height // 2
+
+        # Check if the pile represents the stockpile (deck)
+        if pile == self.game.stockpile:
+            if not face_up:
+                # Draw the back of the deck card on top of the rectangle
+                back_image = self.card_images['back.png']
+                back_rect = back_image.get_rect(center=(deck_x, deck_y))
+                self.window_surface.blit(back_image, back_rect)
             else:
-                image = self.card_images['back.png']
-            self.window_surface.blit(image, (x, y + 30*i))
+                # Draw nothing if the stockpile is face up
+                return
+        else:
+            # Draw the cards in the pile
+            for i, card in enumerate(pile.cards):
+                if pile == self.game.stockpile and not face_up and i != len(pile.cards) - 1:
+                    continue
+
+                if card.face_up == face_up:
+                    image = self.card_images[f'{card.rank}{card.suit}']
+                else:
+                    image = self.card_images['back.png']
+
+                # Calculate the position for each card based on the pile and card dimensions
+                card_x = x
+                card_y = y + i * 30  # Adjust the vertical spacing between cards (currently set to 30 pixels)
+
+                self.window_surface.blit(image, (card_x, card_y))
 
     def handle_click(self, position):
         x, y = position
