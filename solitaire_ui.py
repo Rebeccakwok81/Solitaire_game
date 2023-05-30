@@ -104,7 +104,6 @@ class SolitaireUI:
     
     # Draw empty holder images for foundation pile and talon pile
         empty_holder_image = self.card_images['empty_holder.png']
-        empty_holder_rect = empty_holder_image.get_rect()
 
         foundation_pile_positions = [(left_right_margin + (i + 3) * column_width, top_row_y) for i in range(4)]
         for position in foundation_pile_positions:
