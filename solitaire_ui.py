@@ -140,7 +140,6 @@ class SolitaireUI:
         card_width = 115
         card_height = 175
 
-
         deck_x = x + card_width // 2
         deck_y = top_row_y + card_height // 2
 
@@ -160,6 +159,7 @@ class SolitaireUI:
                     image = self.card_images[f'{card.rank}{card.suit}']
                 else:
                     image = self.card_images['back.png']
+                
                 card_x = x
                 
                 if pile == self.game.talonpile:
@@ -171,6 +171,33 @@ class SolitaireUI:
 
     def handle_click(self, position):
         x, y = position
+
+        for i, pile in enumerate(self.game.tableau):
+            pile_x = self.left_right_margin + i * self.column_width
+            pile_y = self.bottom_row_y
+
+            # check if the click occurred within the bounding box of the tableau pile
+            if pile_x <= x < pile_x + self.card_width and pile_y <= y < pile_y + len(pile.cards) * 30:
+                # if a tableau pile was clicked
+                if self.selected_pile is None:
+                    # select the clicked pile as the selected pile
+                    self.selected_pile = pile
+                    self.selected_cards = pile.get_selected_cards(position)
+                else:
+                    # move the selected cards from the selected pile to the clicked pile
+                    if pile.is_valid_move(self.selected_pile.peek_top_card()):
+                        pile.add_cards(self.selected_cards)
+                        self.selected_pile.remove_selected_cards()
+                    else:
+                        print("Invalid move. Cannot move cards to this pile.")
+                
+                break
+        else:
+            # handle the click-and-drag movement of cards
+            if self.selected_pile is not None:
+                dx = position[0] - self.click_position[0]
+                dy = position[1] - self.click_position[1]
+                self.selected_pile.move_selected_cards(dx, dy)
 
         # set the coordinates for the deck and the size of a card
         stockpile_x = self.left_right_margin + self.column_width // 2 - self.card_width // 2
