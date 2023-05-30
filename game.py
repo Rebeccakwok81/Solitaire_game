@@ -13,7 +13,6 @@ class Game:
         self.foundation = [FoundationPile() for _ in range(4)]
         self.stockpile = Stockpile()
         self.talonpile = TalonPile()
-        self.tableau_piles = TableauPile()
 
         for i in range(7):
             for j in range(i):
