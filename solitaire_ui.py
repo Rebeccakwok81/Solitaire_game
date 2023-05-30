@@ -165,8 +165,8 @@ class SolitaireUI:
                 if pile == self.game.talonpile:
                     card_y = y
                 else:
-                    card_y = y + i * 30
-                    
+                    card_y = y + i * 15
+
                 self.window_surface.blit(image, (card_x, card_y))
 
     def handle_click(self, position):
