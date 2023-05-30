@@ -6,9 +6,9 @@
 # still require a background asset, set to green for now.
 
 # edit on 5/30:
-# line 60-67: load empty image for foundation pile and talon pile
-# line 90-97: comment-out for now, please feel free to change
-# line 104-112: draw empty holder images for foundation pile and talon pile
+# line 64-70: load empty image for foundation pile and talon pile
+# line 92-99: comment-out for now, please feel free to change
+# line 106-113: draw empty holder images for foundation pile and talon pile
 
 import pygame
 import os
@@ -147,38 +147,6 @@ class SolitaireUI:
             else:
                 # Draw nothing if the stockpile is face up
                 return
-        elif pile == self.game.talonpile:
-            if pile.is_empty():
-                # Draw the empty holder image for the talon pile
-                empty_holder_image = self.card_images['empty_holder.png']
-                empty_holder_rect = empty_holder_image.get_rect(center=(deck_x, deck_y))
-                self.window_surface.blit(empty_holder_image, empty_holder_rect)
-            else:
-                # Draw the top card of the talon pile
-                top_card = pile.peek()
-                if top_card.face_up == face_up:
-                    image = self.card_images[f'{top_card.rank}{top_card.suit}']
-                else:
-                    image = self.card_images['back.png']
-
-                self.window_surface.blit(image, (x, y))
-
-        elif pile in self.game.foundation:
-            if pile.is_empty():
-                # Draw the empty holder image for the foundation pile
-                empty_holder_image = self.card_images['empty_holder.png']
-                empty_holder_rect = empty_holder_image.get_rect(center=(deck_x, deck_y))
-                self.window_surface.blit(empty_holder_image, empty_holder_rect)
-        
-            else:
-                # Draw the top card of the foundation pile
-                top_card = pile.peek()
-                if top_card.face_up == face_up:
-                    image = self.card_images[f'{top_card.rank}{top_card.suit}']
-                else:
-                    image = self.card_images['back.png']
-
-                self.window_surface.blit(image, (x, y))
         else:
             # Draw the cards in the pile
             for i, card in enumerate(pile.cards):
