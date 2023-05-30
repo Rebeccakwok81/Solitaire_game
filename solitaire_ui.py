@@ -5,6 +5,11 @@
 # coordinates are approximate, will adjust when we can get it to compile.
 # still require a background asset, set to green for now.
 
+# edit on 5/30:
+# line 60-67: load empty image for foundation pile and talon pile
+# line 90-97: comment-out for now, please feel free to change
+# line 104-112: draw empty holder images for foundation pile and talon pile
+
 import pygame
 import os
 from pygame.locals import *
@@ -55,6 +60,15 @@ class SolitaireUI:
         except pygame.error:
             print(f"Error loading back image: {back_image_path}")
 
+        # load empty image for foundation pile and talon pile
+        empty_holder = f"Playing Cards Asset\empty_holder.png"
+        try:
+            e_image = pygame.image.load(empty_holder)
+            e_image = pygame.transform.scale(e_image, (card_width, card_height))
+            card_images['empty_holder.png'] = e_image
+        except pygame.error:
+            print(f"Error loading back image: {empty_holder}")
+
         return card_images
 
     def draw(self):
@@ -75,18 +89,29 @@ class SolitaireUI:
         bottom_row_y = 300  
 
     # Draw rectangles for stockpile, talonpile, and foundation piles
-        for i in range(7):
-            x_coordinate = left_right_margin + i*column_width
-            if i == 0:
-                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Stockpile
-            elif i == 1:
-                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Talonpile
-            elif i >= 3:
-                pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Foundation piles
+        # for i in range(7):
+        #     x_coordinate = left_right_margin + i*column_width
+        #     if i == 0:
+        #         pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Stockpile
+        #     elif i == 1:
+        #         pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Talonpile
+        #     elif i >= 3:
+        #         pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Foundation piles
 
     # Calculate the position of the stockpile
         stockpile_x = left_right_margin + column_width // 2 - card_width // 2
         stockpile_y = top_row_y
+    
+    # Draw empty holder images for foundation pile and talon pile
+        empty_holder_image = self.card_images['empty_holder.png']
+        empty_holder_rect = empty_holder_image.get_rect()
+
+        foundation_pile_positions = [(left_right_margin + (i + 3) * column_width, top_row_y) for i in range(4)]
+        for position in foundation_pile_positions:
+            self.window_surface.blit(empty_holder_image, position)
+
+        talon_pile_position = (left_right_margin + column_width, top_row_y)
+        self.window_surface.blit(empty_holder_image, talon_pile_position)
 
     # Draw tableau piles
         for i, pile in enumerate(self.game.tableau):
@@ -123,6 +148,38 @@ class SolitaireUI:
             else:
                 # Draw nothing if the stockpile is face up
                 return
+        elif pile == self.game.talonpile:
+            if pile.is_empty():
+                # Draw the empty holder image for the talon pile
+                empty_holder_image = self.card_images['empty_holder.png']
+                empty_holder_rect = empty_holder_image.get_rect(center=(deck_x, deck_y))
+                self.window_surface.blit(empty_holder_image, empty_holder_rect)
+            else:
+                # Draw the top card of the talon pile
+                top_card = pile.peek()
+                if top_card.face_up == face_up:
+                    image = self.card_images[f'{top_card.rank}{top_card.suit}']
+                else:
+                    image = self.card_images['back.png']
+
+                self.window_surface.blit(image, (x, y))
+
+        elif pile in self.game.foundation:
+            if pile.is_empty():
+                # Draw the empty holder image for the foundation pile
+                empty_holder_image = self.card_images['empty_holder.png']
+                empty_holder_rect = empty_holder_image.get_rect(center=(deck_x, deck_y))
+                self.window_surface.blit(empty_holder_image, empty_holder_rect)
+        
+            else:
+                # Draw the top card of the foundation pile
+                top_card = pile.peek()
+                if top_card.face_up == face_up:
+                    image = self.card_images[f'{top_card.rank}{top_card.suit}']
+                else:
+                    image = self.card_images['back.png']
+
+                self.window_surface.blit(image, (x, y))
         else:
             # Draw the cards in the pile
             for i, card in enumerate(pile.cards):
@@ -147,21 +204,21 @@ class SolitaireUI:
         # section below tries to enforce some of the game rules, still needs a lot of work.
         if y >= 300:
             pile_index = (x - 100) // 80
-            if 0 <= pile_index < len(self.game.tableau_piles):
+            if 0 <= pile_index < len(self.game.tableau):
                 # handles tableau pile click
                 if self.selected_pile is None:
                     # section based on the rules that you can only select the bottom card or a pile of face-up cards from tableau pile.
                     # will check if the pile at pile_index has any face up cards. 
-                    face_up_cards = [card for card in self.game.tableau_piles[pile_index].cards if card.face_up]
+                    face_up_cards = [card for card in self.game.tableau[pile_index].cards if card.face_up]
                     if face_up_cards:
                         # need to create new pile with face-up cards and select it. 
                         self.selected_pile = Pile()
                         for card in face_up_cards:
                             self.selected_pile.add_card(card)
                 else:
-                    if self.game.tableau_piles[pile_index].is_valid_move(self.selected_pile):
+                    if self.game.tableau[pile_index].is_valid_move(self.selected_pile):
                         # need to move cards from selected pile to tableau pile.
-                        self.game.tableau_piles[pile_index].add_cards(self.selected_pile.cards)
+                        self.game.tableau[pile_index].add_cards(self.selected_pile.cards)
                         # need to remove the moved cards from original pile.
                         for card in self.selected_pile.cards:
                             self.selected_pile.remove_card(card)
@@ -198,10 +255,10 @@ class SolitaireUI:
         # here we check if empty tableau spot was clicked. 
         elif y >= 300:
             pile_index = (x - 100) // 80
-            if 0 <= pile_index < len(self.game.tableau_piles) and self.game.tableau_piles[pile_index].is_empty():
+            if 0 <= pile_index < len(self.game.tableau) and self.game.tableau[pile_index].is_empty():
                 if self.selected_pile is not None and self.selected_pile.peek().rank == Rank.KING:
                     # Move the King to the empty spot
-                    self.game.tableau_piles[pile_index].add_cards(self.selected_pile.cards)
+                    self.game.tableau[pile_index].add_cards(self.selected_pile.cards)
                     self.selected_pile.clear()
                     self.selected_pile = None
         
