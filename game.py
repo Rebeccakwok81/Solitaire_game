@@ -8,6 +8,7 @@ from tableau import TableauPile
 class Game:
     def __init__(self):
         self.deck = Deck()
+        self.waste = []
         self.deck.shuffle()
         self.tableau = [TableauPile() for _ in range(7)]
         self.foundation = [FoundationPile() for _ in range(4)]

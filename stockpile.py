@@ -5,6 +5,12 @@ class Stockpile(Pile):
         super().__init__()
         self.talon_pile = []
 
+    def deal_card(self):
+        if not self.is_empty():
+            return self.cards.pop()
+        else:
+            raise ValueError("Stockpile is empty, cannot deal a card.")
+
     def move_to_talon(self):
         if not self.is_empty():
             card = self.remove_card()
