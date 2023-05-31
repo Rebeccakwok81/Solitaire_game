@@ -81,19 +81,19 @@ class SolitaireUI:
     def draw(self):
         self.window_surface.fill((0, 100, 0))  # green background
 
-    # margins from left and right window borders
-        left_right_margin = 100
+    # # margins from left and right window borders
+    #     left_right_margin = 100
 
-    # calculate new column width
-        column_width = (1200 - 2*left_right_margin) // 7
+    # # calculate new column width
+    #     column_width = (1200 - 2*left_right_margin) // 7
 
-    # calculate the card width and height
-        card_width = 115
-        card_height = 175
+    # # calculate the card width and height
+    #     card_width = 115
+    #     card_height = 175
 
-    # Y-coordinates for the rows
-        top_row_y = 50  
-        bottom_row_y = 300  
+    # # Y-coordinates for the rows
+    #     top_row_y = 50  
+    #     bottom_row_y = 300  
 
     # Draw rectangles for stockpile, talonpile, and foundation piles
         # for i in range(7):
@@ -106,28 +106,28 @@ class SolitaireUI:
         #         pygame.draw.rect(self.window_surface, (0, 200, 0), pygame.Rect(x_coordinate, top_row_y, card_width, card_height))  # Foundation piles
 
     # calculate the position of the stockpile
-        stockpile_x = left_right_margin + column_width // 2 - card_width // 2
-        stockpile_y = top_row_y
+        stockpile_x = self.left_right_margin
+        stockpile_y = self.top_row_y
     
     # draw empty holder images for foundation pile and talon pile
         empty_holder_image = self.card_images['empty_holder.png']
 
-        foundation_pile_positions = [(left_right_margin + (i + 3) * column_width, top_row_y) for i in range(4)]
+        foundation_pile_positions = [(self.left_right_margin + (i + 3) * self.column_width, self.top_row_y) for i in range(4)]
         for position in foundation_pile_positions:
             self.window_surface.blit(empty_holder_image, position)
 
-        talon_pile_position = (left_right_margin + column_width, top_row_y)
+        talon_pile_position = (self.left_right_margin + self.column_width, self.top_row_y)
         self.window_surface.blit(empty_holder_image, talon_pile_position)
 
     # draw tableau piles
         for i, pile in enumerate(self.game.tableau):
-            self.draw_pile_cards(pile, (left_right_margin + i*column_width, bottom_row_y))
+            self.draw_pile_cards(pile, (self.left_right_margin + i*self.column_width, self.bottom_row_y))
 
     # draw foundation, talon, and stockpile cards
         for i, pile in enumerate(self.game.foundation):
-            self.draw_pile_cards(pile, (left_right_margin + (i+3)*column_width, top_row_y))
+            self.draw_pile_cards(pile, (self.left_right_margin + (i+3)*self.column_width, self.top_row_y))
 
-            self.draw_pile_cards(self.game.talonpile, (left_right_margin + column_width, top_row_y))
+            self.draw_pile_cards(self.game.talonpile, (self.left_right_margin + self.column_width, self.top_row_y))
             self.draw_pile_cards(self.game.stockpile, (stockpile_x, stockpile_y), face_up=False)
 
         pygame.display.flip()
