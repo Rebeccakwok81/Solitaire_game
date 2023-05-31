@@ -1,21 +1,21 @@
+from constants import NUM_TABLEAU_PILES, NUM_FOUNDATION_PILES
 from deck import Deck
 from tableau import TableauPile
 from foundation import FoundationPile
 from stockpile import Stockpile
 from talonpile import TalonPile
-from tableau import TableauPile
 
 class Game:
     def __init__(self):
         self.deck = Deck()
         self.waste = []
         self.deck.shuffle()
-        self.tableau = [TableauPile() for _ in range(7)]
-        self.foundation = [FoundationPile() for _ in range(4)]
+        self.tableau = [TableauPile() for _ in range(NUM_TABLEAU_PILES)]
+        self.foundation = [FoundationPile() for _ in range(NUM_FOUNDATION_PILES)]
         self.stockpile = Stockpile()
         self.talonpile = TalonPile()
 
-        for i in range(7):
+        for i in range(NUM_TABLEAU_PILES):
             for j in range(i):
                 self.tableau[i].add_card(self.deck.deal_card())
             card = self.deck.deal_card()

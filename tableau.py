@@ -1,6 +1,10 @@
 from pile import Pile
+from constants import CARD_WIDTH, CARD_HEIGHT
 
 class TableauPile(Pile):
+    def __init__(self):
+        super().__init__()
+
     def remove_cards_from(self, card):
         if card in self.cards:
             index = self.cards.index(card)

@@ -1,4 +1,5 @@
 from pile import Pile
+from constants import CARD_WIDTH, CARD_HEIGHT
 
 class Stockpile(Pile):
     def __init__(self):

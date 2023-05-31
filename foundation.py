@@ -1,9 +1,10 @@
 from pile import Pile
+from constants import MAX_CARDS, RANKS
 
 class FoundationPile(Pile):
     def __init__(self):
         super().__init__()
-        self.max_cards = 13
+        self.max_cards = MAX_CARDS
 
     def add_card(self, card):
         if self.is_valid_move(card):
@@ -12,7 +13,7 @@ class FoundationPile(Pile):
             raise ValueError('Invalid move')
 
     def is_valid_move(self, card):
-        if self.is_empty() and card.rank == 'A':
+        if self.is_empty() and card.rank == RANKS[0]:
             return True
         elif not self.is_empty():
             top_card = self.peek_top_card()
@@ -22,8 +23,7 @@ class FoundationPile(Pile):
 
     @staticmethod
     def is_next_rank(rank1, rank2):
-        ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-        return ranks.index(rank1) == ranks.index(rank2) + 1
+        return RANKS.index(rank1) == RANKS.index(rank2) + 1
 
     def is_full(self):
         return len(self.cards) == self.max_cards

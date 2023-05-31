@@ -1,6 +1,8 @@
+from constants import SUIT_SYMBOLS, RANKS
+
 class Card:
     def __init__(self, rank, suit, face_up=True):
-        self.rank = str(rank)
+        self.rank = rank
         self.suit = suit
         self.face_up = face_up
 
@@ -15,8 +17,8 @@ class Card:
 
     def is_same_color(self, other_card):
         if other_card:
-            red_suits = ['h', 'd']
-            black_suits = ['s', 'c']
+            red_suits = [HEARTS, DIAMONDS]
+            black_suits = [SPADES, CLUBS]
             return (self.suit in red_suits and other_card.suit in red_suits) or \
                    (self.suit in black_suits and other_card.suit in black_suits)
         return False

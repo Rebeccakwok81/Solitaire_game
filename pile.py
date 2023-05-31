@@ -1,4 +1,4 @@
-from card import Card
+from constants import CARD_WIDTH, CARD_HEIGHT
 
 class Pile:
     def __init__(self):
@@ -21,3 +21,6 @@ class Pile:
 
     def is_empty(self):
         return len(self.cards) == 0
+
+    def __len__(self):
+        return len(self.cards)

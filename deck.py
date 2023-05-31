@@ -1,3 +1,4 @@
+from constants import SUITS, RANKS
 from card import Card
 import random
 
@@ -7,8 +8,8 @@ class Deck:
         self.create_deck()
 
     def create_deck(self):
-        for suit in ['h', 'd', 'c', 's']:
-            for rank in ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']:
+        for suit in SUITS:
+            for rank in RANKS:
                 self.cards.append(Card(rank, suit))
 
     def shuffle(self):
