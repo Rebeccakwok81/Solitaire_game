@@ -17,12 +17,7 @@ class SolitaireUI:
         self.window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.card_images = self.load_card_images()
         self.selected_pile = None
-        self.left_right_margin = 100
-        self.column_width = (1200 - 2*self.left_right_margin) // 7
-        self.card_width = 115
-        self.card_height = 175
-        self.top_row_y = 50
-        self.bottom_row_y = 300
+
 
     def load_card_images(self):
         CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
