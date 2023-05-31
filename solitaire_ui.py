@@ -10,7 +10,6 @@ import sys
 class SolitaireUI:
     def __init__(self, game):
         pygame.init()
-        pygame.init()
         self.game = game
         self.talonpile = TalonPile()
         self.tableau_piles = TableauPile()
@@ -18,14 +17,13 @@ class SolitaireUI:
         self.card_images = self.load_card_images()
         self.selected_pile = None
 
-
     def load_card_images(self):
         CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
         card_images = {}
         card_width, card_height = 115, 175
 
-        for suit in ('c', 'd', 'h', 's'):
-            for rank in ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'):
+        for suit in (SUITS):
+            for rank in (RANKS):
                 card_name = f"{rank}{suit}"
                 if rank == '10':
                     filename = f"{rank}{suit}.png"
