@@ -16,6 +16,8 @@ class SolitaireUI:
         self.window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.card_images = self.load_card_images()
         self.selected_pile = None
+        self.selected_cards = None
+        self.click_position = None
 
     def load_card_images(self):
         CARDS_PATH = f"Playing Cards Asset\Cards\Modern"
@@ -62,7 +64,7 @@ class SolitaireUI:
     def draw(self):
         self.window_surface.fill(BACKGROUND_COLOR)  # green background
     
-    # draw empty holder images for foundation pile and talon pile
+        # draw empty holder images for foundation pile and talon pile
         empty_holder_image = self.card_images['empty_holder.png']
 
         foundation_pile_positions = [(TABLEAU_LEFT_MARGIN + (i + 3) * TABLEAU_COLUMN_WIDTH, FOUNDATION_TOP_ROW_Y) for i in range(4)]
@@ -72,11 +74,11 @@ class SolitaireUI:
         talon_pile_position = (TABLEAU_LEFT_MARGIN + TABLEAU_COLUMN_WIDTH, FOUNDATION_TOP_ROW_Y)
         self.window_surface.blit(empty_holder_image, talon_pile_position)
 
-    # draw tableau piles
+        # draw tableau piles
         for i, pile in enumerate(self.game.tableau):
             self.draw_pile_cards(pile, (TABLEAU_LEFT_MARGIN + i*TABLEAU_COLUMN_WIDTH, TABLEAU_BOTTOM_ROW_Y))
 
-    # draw foundation, talon, and stockpile cards
+        # draw foundation, talon, and stockpile cards
         for i, pile in enumerate(self.game.foundation):
             self.draw_pile_cards(pile, (TABLEAU_LEFT_MARGIN + (i+3)*TABLEAU_COLUMN_WIDTH, FOUNDATION_TOP_ROW_Y))
 
@@ -118,33 +120,42 @@ class SolitaireUI:
 
     def handle_click(self, position):
         x, y = position
+        
+        if self.selected_pile is not None:
+            dx = x - self.click_position[0]
+            dy = y - self.click_position[1]
+            self.selected_pile.move_selected_cards(dx, dy)
 
+        self.click_position = position
+
+        # Check if the click is on any of the tableau piles
         for i, pile in enumerate(self.game.tableau):
             pile_x = TABLEAU_LEFT_MARGIN + i * TABLEAU_COLUMN_WIDTH
             pile_y = TABLEAU_BOTTOM_ROW_Y
 
-            # check if the click occurred within the bounding box of the tableau pile
+            # Check if the click occurred within the bounding box of the tableau pile
             if pile_x <= x < pile_x + CARD_WIDTH and pile_y <= y < pile_y + len(pile.cards) * 30:
-                # if a tableau pile was clicked
                 if self.selected_pile is None:
-                    # select the clicked pile as the selected pile
                     self.selected_pile = pile
-                    self.selected_cards = pile.get_selected_cards(position)
+                    self.selected_cards = pile.get_selected_cards(x, y)
                 else:
-                    # move the selected cards from the selected pile to the clicked pile
-                    if pile.is_valid_move(self.selected_pile.peek_top_card()):
-                        pile.add_cards(self.selected_cards)
-                        self.selected_pile.remove_selected_cards()
+                    card = self.selected_cards[0]
+                    if pile.is_valid_move(card):
+                        cards = self.selected_pile.remove_cards_from(card)
+                        pile.add_cards(cards)
+                        self.selected_pile = None
+                        self.selected_cards = None
                     else:
                         print("Invalid move. Cannot move cards to this pile.")
-                
                 break
         else:
-            # handle the click-and-drag movement of cards
+            # Check if there is a pile selected
             if self.selected_pile is not None:
-                dx = position[0] - self.click_position[0]
-                dy = position[1] - self.click_position[1]
-                self.selected_pile.move_selected_cards(dx, dy)
+                dx = x - self.click_position[0]
+                dy = y - self.click_position[1]
+                self.selected_pile.move_selected_cards(x, y, dx, dy)
+
+        self.draw()
 
         # set the coordinates for the deck and the size of a card
         stockpile_x = TABLEAU_LEFT_MARGIN + TABLEAU_COLUMN_WIDTH // 2 - CARD_WIDTH // 2

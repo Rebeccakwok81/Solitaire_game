@@ -24,3 +24,7 @@ class Pile:
 
     def __len__(self):
         return len(self.cards)
+
+    def move_selected_cards(self, dx, dy):
+        for card in self.selected_cards:
+            card.move(dx, dy)

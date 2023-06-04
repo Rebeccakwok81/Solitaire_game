@@ -14,6 +14,7 @@ class Game:
         self.foundation = [FoundationPile() for _ in range(NUM_FOUNDATION_PILES)]
         self.stockpile = Stockpile()
         self.talonpile = TalonPile()
+        self.dragging = None
 
         for i in range(NUM_TABLEAU_PILES):
             for j in range(i):
@@ -44,10 +45,10 @@ class Game:
                 source.remove_card()
                 destination.add_card(card)
         elif isinstance(source, TableauPile) and isinstance(destination, TableauPile):
-            card = source.peek_top_card()
-            if destination.is_valid_move(card):
-                source.remove_card()
-                destination.add_card(card)
+            selected_card = source.get_selected_card()
+            if destination.is_valid_move(selected_card):
+                cards = source.remove_cards_from(selected_card)
+                destination.add_cards(cards)
         elif isinstance(source, TalonPile) and isinstance(destination, TableauPile):
             card = source.peek_top_card()
             if destination.is_valid_move(card):

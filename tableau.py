@@ -1,5 +1,5 @@
 from pile import Pile
-from constants import CARD_WIDTH, CARD_HEIGHT
+from constants import CARD_WIDTH, CARD_HEIGHT, TABLEAU_BOTTOM_ROW_Y
 
 class TableauPile(Pile):
     def __init__(self):
@@ -8,7 +8,9 @@ class TableauPile(Pile):
     def remove_cards_from(self, card):
         if card in self.cards:
             index = self.cards.index(card)
-            return self.cards[index:]
+            removed_cards = self.cards[index:]
+            self.cards = self.cards[:index]
+            return removed_cards
         else:
             return None
 
@@ -25,32 +27,15 @@ class TableauPile(Pile):
         ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
         return ranks.index(rank1) == ranks.index(rank2) + 1
 
-    def get_selected_cards(self, position):
-        x, y = position
-        if self.is_empty():
-            return []
-
-        top_card = self.peek_top_card()
-        selected_cards = []
-
-        if top_card.rect.collidepoint(x, y): 
-            selected_cards.append(top_card)
-
-        return selected_cards
+    def get_selected_cards(self, x, y):
+        for i in reversed(range(len(self.cards))):
+            card_y = TABLEAU_BOTTOM_ROW_Y + i * 30
+            if y >= card_y and y < card_y + CARD_HEIGHT:
+                return self.cards[i:]
+        return []
 
     def move_selected_cards(self, dx, dy):
-        if self.selected_cards:
-            for card in self.selected_cards:
-                card.x += dx
-                card.y += dy    
-
-    def add_cards(self, cards):
-        self.cards.extend(cards)
-
-    def remove_selected_cards(self):
-        self.cards = self.cards[:-1]
-
-    def __len__(self):
-        return len(self.cards)
-
+        selected_cards = self.get_selected_cards(x, y)
+        for card in selected_cards:
+            card.move(dx, dy)
     
